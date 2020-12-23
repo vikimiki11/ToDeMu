@@ -1,0 +1,16 @@
+{
+  "name": "tanky",
+  "version": "1.0.0",
+  "description": "Vytvoření hry tanky, kterou jsem hrál jako malý, v multiplayerové verzi",
+  "main": "index.js",
+  "author": "Viktor Fišer",
+  "private": false,
+  "license": "GNU GPLv3",
+  "dependencies": {
+    "express": "~4.17.1",
+    "socket.io": "~2.3.0"
+  },
+  "scripts": {
+    "start": "node --inspect index.js"
+  }
+}
