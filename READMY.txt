@@ -1,0 +1,1 @@
+Before start you need creat url.txt with adres to mongodb
