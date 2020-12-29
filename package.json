@@ -1,17 +1,17 @@
 {
-  "name": "todemu",
-  "version": "1.0.0",
-  "description": "Tower Defense Multiplayer",
-  "main": "index.js",
-  "author": "Viktor Fišer",
-  "private": false,
-  "license": "GNU GPLv3",
-  "dependencies": {
-    "express": "~4.17.1",
-    "socket.io": "~2.3.0",
-    "mongodb": "~3.6.3"
-  },
-  "scripts": {
-    "start": "node --inspect index.js"
-  }
+	"name": "todemu",
+	"version": "1.0.0",
+	"description": "Tower Defense Multiplayer",
+	"main": "index.js",
+	"author": "Viktor Fišer",
+	"private": false,
+	"license": "GNU GPLv3",
+	"dependencies": {
+		"express": "~4.17.1",
+		"socket.io": "~2.3.0",
+		"mongodb": "~3.6.3"
+	},
+	"scripts": {
+		"start": "node --inspect index.js"
+	}
 }

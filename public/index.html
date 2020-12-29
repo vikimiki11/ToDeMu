@@ -1,11 +1,272 @@
 <!DOCTYPE html>
-<html style="image-rendering: pixelated;">
-	<head>
-		<meta charset="utf-8"/>
-		<link rel="icon" href="img/icon.png">
-	</head>
-	<body>
-		<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-		<script src="/socket.io/socket.io.js"></script>
-		<script src="js.js"></script>
-	</body>
+<html style="image-rendering: pixelated;padding: 0 0 0 50vw;">
+
+<head>
+	<meta charset="utf-8" />
+	<link rel="icon" href="img/icon.png">
+	<style>
+		body {
+			margin: 0;
+			position: relative;
+			width: 100vw;
+			max-width: 1900px;
+			/*TODO change to rem/em */
+			height: 100vh;
+			position: relative;
+			overflow: hidden;
+			font-family: sans-serif;
+			transform: translate(-50%);
+			background-image: url("/img/background.png");
+			color: white;
+		}
+
+		aside {
+			width: 20rem;
+			display: grid;
+			grid-template-columns: auto;
+			border-left: solid 1px black;
+			border-right: solid 1px black;
+			border-top: 0px;
+			height: 100vh;
+			grid-template-rows: 0rem 3rem auto 3rem;
+			box-sizing: border-box;
+			position: absolute;
+			top: 0px;
+			right: -20rem;
+			transition: right 1s;
+			background-color: white;
+		}
+
+		aside:focus-within {
+			right: 0;
+		}
+
+		aside:hover {
+			right: 0;
+		}
+
+		#button {
+			background: rgb(50, 50, 71);
+			border-right: 1px white solid;
+			top: 50vh;
+			width: 2rem;
+			height: 8rem;
+			position: relative;
+			transform: translate(-100%, -50%);
+		}
+
+		.Line {
+			height: 1px;
+			width: 2.82em;
+			transform-origin: 0% 50%;
+			background-color: black;
+			position: absolute;
+			left: 0.5px
+		}
+
+		.CCW {
+			transform: rotate(-45deg);
+			top: 2rem;
+		}
+
+		.CW {
+			transform: rotate(45deg);
+			bottom: 2rem;
+		}
+
+		#buttonleftline {
+			position: absolute;
+			top: 2rem;
+			bottom: 2rem;
+			border-left: solid 1px black;
+			height: 4rem;
+			left: 0;
+		}
+
+		.SwitchG {
+			padding: 1rem;
+			text-align: center;
+			display: block;
+			border-bottom: 1px solid black;
+			background-image: url("img/globalchat.jpg");
+			background-size: cover;
+			color: black;
+		}
+
+		.SwitchL {
+			padding: 1rem;
+			text-align: center;
+			display: block;
+			border-bottom: 1px solid black;
+			background-image: url("img/localchat.jpg");
+			background-size: cover;
+			background-position: center;
+			color: black;
+		}
+
+		.Chat {
+			overflow-y: auto;
+			-webkit-hyphens: auto;
+			-ms-hyphens: auto;
+			hyphens: auto;
+		}
+
+		.WholeScreen {
+			background-image: url("/img/background.png");
+			position: absolute;
+			width: 101vw;
+			height: 101vh;
+			left: 50%;
+			top: 50%;
+			max-width: 1900px;
+			transform: translate(-50%, -50%);
+		}
+
+		.CenterVH {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+		}
+
+		.Box {
+			border: black solid 1px;
+			border-radius: 1rem;
+			background-color: rgb(69, 69, 99);
+			padding: 1rem;
+		}
+
+		#signup h1,
+		#login h1 {
+			text-align: center;
+		}
+
+		#signup input,
+		#login input {
+			position: relative;
+			left: 50%;
+			transform: translate(-50%, 0%);
+			border: 0px;
+			border-bottom: 1px solid black;
+			color: white;
+			background-color: rgba(0, 0, 0, 0);
+			margin-bottom: 1rem;
+			font-size: 2rem;
+		}
+
+		#signup div button,
+		#login div button {
+			position: relative;
+			left: 50%;
+			transform: translate(-50%, 0%);
+			border: 0px;
+			color: rgb(50, 50, 71);
+			background-color: rgba(0, 0, 0, 0);
+			font-size: 2rem;
+			outline: outset;
+		}
+
+		#signup div button:active,
+		#login div button:active {
+			outline: inset;
+		}
+
+		#signup>button,
+		#login>button {
+			color: white;
+			font-size: 1rem;
+		}
+
+		.CenterH {
+			position: relative;
+			left: 50%;
+			transform: translate(-50%, 0%);
+		}
+
+		.CenterV {
+			position: relative;
+			top: 50%;
+			transform: translate(0%, -50%);
+		}
+
+		.Top {
+			position: absolute;
+			top: 1rem;
+		}
+
+		.Bottom {
+			position: absolute;
+			bottom: 1rem;
+		}
+
+		.Left {
+			position: absolute;
+			left: 1rem;
+		}
+
+		.Right {
+			position: absolute;
+			right: 1rem;
+		}
+
+		input:focus,
+		select:focus,
+		textarea:focus {
+			outline: none;
+		}
+
+		::placeholder {
+			color: rgb(189, 189, 189)
+		}
+		aside input{
+			border: 0.5rem solid black;
+		}
+	</style>
+</head>
+
+<body>
+	<main style="display:none">
+
+	</main>
+	<aside style="display:none">
+		<div id="button">
+			<div class="Line CCW"></div>
+			<div id="buttonleftline"></div>
+			<div class="Line CW"></div>
+		</div>
+		<div id="rs" class="SwitchG" onclick='switchchat()'>Global chat</div>
+		<div class="Chat"></div>
+		<input type="text" id="mes">
+	</aside>
+	<div class="WholeScreen" id="login">
+		<div class="CenterVH Box">
+			<h1>
+				Log in
+			</h1>
+			<input type="text" placeholder="nickname" size="32"><br>
+			<input type="password" placeholder="password" size="32"><br>
+			<button onclick="login()">>>></button>
+		</div>
+		<button class="Box Top Right" onclick="switchtosignup()">
+			Sign up
+		</button>
+	</div>
+	<div class="WholeScreen" id="signup" style="display:none">
+		<div class="CenterVH Box">
+			<h1>
+				Sign up
+			</h1>
+			<input type="text" placeholder="nickname" size="32"><br>
+			<input type="password" placeholder="password" size="32"><br>
+			<button onclick="signup()">>>></button>
+		</div>
+		<button class="Box Top Right" onclick="switchtologin()">
+			Log in
+		</button>
+	</div>
+	<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="js.js"></script>
+</body>
+
+</html>

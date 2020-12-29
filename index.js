@@ -25,12 +25,27 @@ function logit(mes){
 }
 //io.emit('',data)
 //socket.emit('',data);
+// MARK: Comunication
 io.on('connection', (socket) => {
-	socket.on('register', (username) => {
+	socket.on('signup', async(data) => {
+		temp = await CreateUser(data[0], data[1])
+		console.log("backsignup"+temp)
+		socket.emit("backsignup",temp)
 	});
+	socket.on('login', async(data) => {
+		if (await login(data[0],data[1])) {
+			socket.emit('backlogin', true)
+			console.log("backlogin true")
+		} else {
+			socket.emit('backlogin', false)
+			console.log("backlogin false")
+		}
+	})
 	socket.on('disconnect', () => {
 	});
 })
+
+// MARK: Database functions
 async function CreateUser(name,pass){
 	if(!await FindUser(name)){
 		return new Promise(resolve => {
@@ -58,13 +73,9 @@ function FindUser(name){
 };
 function login(name,pass){
 	return new Promise(async resolve => {
-		x=await FindUser(name)
-		resolve(x.password==pass)
+		x = await FindUser(name)
+		x=x?x:"none"
+		logit(x.password == pass)
+		resolve(x.password == pass)
 	})
 }
-setTimeout(async() => {
-	x=await CreateUser("viki","jede")
-	console.log(x)
-	x=await login("viki","jede")
-	console.log(x)
-}, 2000);
