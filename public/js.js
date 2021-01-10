@@ -15,17 +15,17 @@ async function sha256(message) {
 }
 function switchchat() {
 	sa = document.querySelector("#rs").className
-	if (sa == "switchg") {
+	if (sa == "SwitchG") {
 		if (membersact[username].room !== "") {
-			document.querySelector("#rs").className = "switchl"; document.querySelector("#rs").innerHTML = "Local chat"
+			document.querySelector("#rs").className = "SwitchL"; document.querySelector("#rs").innerHTML = "Local chat"
 		}
 	} else {
-		document.querySelector("#rs").className = "switchg"; document.querySelector("#rs").innerHTML = "Global chat"
+		document.querySelector("#rs").className = "SwitchG"; document.querySelector("#rs").innerHTML = "Global chat"
 	}
 	if (document.querySelector("#rs").className != sa) {
 		document.querySelector(".chat").innerHTML = ""
-		rs = document.querySelector("#rs").className.split("switch")[1]
-		if (rs != "g") { rs = membersact[username].room; if (typeof zpravy[membersact[username].room] == "undefined") { zpravy[membersact[username].room] = [] } }
+		rs = document.querySelector("#rs").className.split("Switch")[1]
+		if (rs != "G") { rs = membersact[username].room; if (typeof zpravy[membersact[username].room] == "undefined") { zpravy[membersact[username].room] = [] } }
 		for (let i of zpravy[rs]) {
 			addChatMessage(i, false)
 		}
@@ -161,3 +161,10 @@ document.querySelectorAll("#signup input").forEach(element => {
 		}
 	})
 })
+document.querySelector("aside input").addEventListener("keyup", function (event) {
+	if (event.keyCode === 13) {
+		// TODO: addmesage
+	}
+})
+
+// Mark: Comunication from server
