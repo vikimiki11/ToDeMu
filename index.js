@@ -1,4 +1,4 @@
-gridsize = [7, 11]//[x,y] Tell how big is gaming grid
+const gridsize = [7, 11]//[x,y] Tell how big is gaming grid
 var express = require('express');
 var app = express();
 var path = require('path');
@@ -6,8 +6,7 @@ const { Socket } = require('net');
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var port = process.env.PORT || 8080;
-const MongoClient = require('mongodb').MongoClient;
-const url = require('fs').readFileSync('url.txt', 'utf8');
+var DbConnection = require('./db');
 var serverlist = {}
 server.listen(port, () => {
 	console.log('Server listening at port %d', port);
@@ -107,26 +106,22 @@ io.on('connection', (socket) => {
 // MARK: Database functions
 async function CreateUser(name, pass) {
 	if (!await FindUser(name)) {
-		return new Promise(resolve => {
-			MongoClient.connect(url, function (err, db) {
+		return new Promise(async resolve => {
+			let db = await DbConnection.Get();
+			db.db("ToDeMu").collection("users").insertOne({ name: name, password: pass, friends: ["viki", "f"], startedgames: 0, win: 0, lost: 0, buildtowers: 0, buildtroopers: 0, score: 1000 }, function (err, res) {
 				if (err) throw err;
-				db.db("ToDeMu").collection("users").insertOne({ name: name, password: pass, friends: ["viki", "f"], startedgames: 0, win: 0, lost: 0, buildtowers: 0, buildtroopers: 0, score: 1000 }, function (err, res) {
-					if (err) throw err;
-					if (res.result.ok) logit("was created user " + name);
-					resolve(Boolean(res.result.ok));
-				});
+				if (res.result.ok) logit("was created user " + name);
+				resolve(Boolean(res.result.ok));
 			});
 		});
 	} else return false;
 }
 function FindUser(name) {
-	return new Promise(resolve => {
-		MongoClient.connect(url, function (err, db) {
+	return new Promise(async resolve => {
+		let db = await DbConnection.Get();
+		db.db("ToDeMu").collection("users").findOne({ name: name }, function (err, result) {
 			if (err) throw err;
-			db.db("ToDeMu").collection("users").findOne({ name: name }, function (err, result) {
-				if (err) throw err;
-				resolve(result);
-			});
+			resolve(result);
 		});
 	});
 };
