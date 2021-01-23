@@ -1,22 +1,24 @@
 <!DOCTYPE html>
-<html style="image-rendering: pixelated;padding: 0 0 0 50vw;">
+<html style="image-rendering: pixelated;padding: 0 0 0 50vw;" lang="en">
 
 <head>
+	<meta name="description"content="THE BEST MULTIPLAYER TOWER DEFENSE">
 	<meta charset="utf-8" />
 	<link rel="icon" href="img/icon.png">
+	<title>ToDeMu</title>
 	<style>
 		body {
+			font-family: 'Noto Sans JP', sans-serif;
 			margin: 0;
-			position: relative;
 			width: 100vw;
 			max-width: 1900px;
 			/*TODO change to rem/em */
 			height: 100vh;
 			position: relative;
 			overflow: hidden;
-			font-family: sans-serif;
 			transform: translate(-50%);
 			background-image: url("/img/background.png");
+			background-color: rgb(50, 50, 71);
 			color: white;
 		}
 
@@ -28,7 +30,7 @@
 			border-right: solid 1px black;
 			border-top: 0px;
 			height: 100vh;
-			grid-template-rows: 0rem 3rem auto 3rem;
+			grid-template-rows: 0rem auto 3rem;
 			box-sizing: border-box;
 			position: absolute;
 			top: 0px;
@@ -46,8 +48,6 @@
 		}
 
 		#button {
-			background: rgb(50, 50, 71);
-			border-right: 1px white solid;
 			top: 50vh;
 			width: 2rem;
 			height: 8rem;
@@ -57,7 +57,7 @@
 
 		.Line {
 			height: 1px;
-			width: 2.82em;
+			width: 2.7em;
 			transform-origin: 0% 50%;
 			background-color: black;
 			position: absolute;
@@ -106,6 +106,7 @@
 		}
 
 		.Chat {
+			grid-template-rows: 3rem auto;
 			overflow-y: auto;
 			-webkit-hyphens: auto;
 			-ms-hyphens: auto;
@@ -167,8 +168,18 @@
 			outline: outset;
 		}
 
+		#servers button{
+			border: 0px;
+			color: white;
+			background-color: rgba(0, 0, 0, 0);
+			outline: outset;
+			font-size: 1rem;
+			margin-left: 1rem;
+		}
+
 		#signup div button:active,
-		#login div button:active {
+		#login div button:active,
+		#servers button:active {
 			outline: inset;
 		}
 
@@ -223,12 +234,116 @@
 		aside input {
 			border: 0.5rem solid black;
 		}
+
+		.message {
+			padding: 0 0.75rem;
+			font-weight: bold;
+		}
+
+		.username {
+			margin-right: 0.25rem;
+		}
+
+		.messageBody {
+			color: black
+		}
+
+		main>div {
+			width: 100%;
+			height: 100vh;
+			position: relative;
+		}
+
+		#hry {
+			display: grid;
+			grid-template-columns: calc(22rem + 2px) 20rem auto;
+			grid-template-rows: calc(100vh - 2rem);
+			gap: 2rem;
+			padding: 1rem;
+			width: calc(100% - 4rem);
+		}
+
+		#friends {
+			width: 100%;
+			border-radius: 0;
+			overflow-y: auto;
+		}
+
+		#servers{
+			border-radius: 0 1rem 1rem 0;
+			overflow-y: auto;
+		}
+
+		#friendsearch{
+			border-radius: 1rem 0 0 1rem;
+			position: relative;
+			left:calc(2rem + 1px);
+			overflow-y: auto;
+		}
+		#friendsearch > input{
+				border: 0;
+				background-color: rgba(0,0,0,0);
+				border-bottom: 1px solid white;
+		}
+		td{
+			border: solid 0.125rem rgb(69, 69, 99);
+			height: 3rem;
+			width: 3rem;
+		}
+		#game>div>div{
+			display: inline-block;
+			margin: 0 10rem;
+		}
+		#game>div>div>h1{
+			text-align:center;
+		}
+		#game>div{
+			display: grid;
+			grid-template-columns: 44.5rem 44.5rem;
+			grid-template-rows: auto;
+		}
+		.deployzone>td{
+			border:0;
+		}
+		.deployzone{
+			background-color: rgb(40,200,40)
+		}
 	</style>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet">
 </head>
 
 <body>
 	<main style="display:none">
-
+		<div id="hry">
+			<div id="friendsearch" class="Box">
+				<h2>Find friend</h2>
+				<input type="text" placeholder="nickname" size="32">
+				<ul style="list-style-type:none;">
+					<li>Doesn't work</li>
+				</ul>
+			</div>
+			<div id="friends" class="Box">
+				<h2>Your friends online</h2>
+				<ul style="list-style-type:none;">
+					<li>Doesn't work</li>
+				</ul>
+			</div>
+			<div id="servers" class="Box">
+				<h2>List of servers or <button onclick="socket.emit('creategame',[true])">Create public server</button></h2>
+				<ul id="serverlist">
+					
+				</ul>
+			</div>
+		</div>
+		<div id="game">
+			<div class="CenterVH">
+				<div>
+				</div>
+				<div>
+				</div>
+			</div>
+		</div>
 	</main>
 	<aside style="display:none">
 		<div id="button">
@@ -236,8 +351,14 @@
 			<div id="buttonleftline"></div>
 			<div class="Line CW"></div>
 		</div>
-		<div id="rs" class="SwitchG" onclick='switchchat()'>Global chat</div>
-		<div class="Chat"></div>
+		<div class="chat">
+			<div class="SwitchG" onclick='switchchat()'>Global chat</div>
+			<div class="ChatG"></div>
+		</div>
+		<div class="chat" style="display: none;">
+			<div class="SwitchL" onclick='switchchat()'>Local chat</div>
+			<div class="ChatL"></div>
+		</div>
 		<input type="text" id="mes">
 	</aside>
 	<div class="WholeScreen" id="login">
@@ -245,7 +366,7 @@
 			<h1>
 				Log in
 			</h1>
-			<input type="text" placeholder="nickname" size="32"><br>
+			<input type="text" placeholder="nickname" size="32" autofocus><br>
 			<input type="password" placeholder="password" size="32"><br>
 			<button onclick="login()">>>></button>
 		</div>
@@ -266,6 +387,7 @@
 			Log in
 		</button>
 	</div>
+	<div>
 	<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="js.js"></script>
