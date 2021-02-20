@@ -2,7 +2,7 @@
 <html style="image-rendering: pixelated;padding: 0 0 0 50vw;" lang="en">
 
 <head>
-	<meta name="description"content="THE BEST MULTIPLAYER TOWER DEFENSE">
+	<meta name="description" content="THE MULTIPLAYER TOWER DEFENSE">
 	<meta charset="utf-8" />
 	<link rel="icon" href="img/icon.png">
 	<title>ToDeMu</title>
@@ -168,7 +168,7 @@
 			outline: outset;
 		}
 
-		#servers button{
+		#servers button {
 			border: 0px;
 			color: white;
 			background-color: rgba(0, 0, 0, 0);
@@ -269,54 +269,95 @@
 			overflow-y: auto;
 		}
 
-		#servers{
+		#servers {
 			border-radius: 0 1rem 1rem 0;
 			overflow-y: auto;
 		}
 
-		#friendsearch{
+		#friendsearch {
 			border-radius: 1rem 0 0 1rem;
 			position: relative;
-			left:calc(2rem + 1px);
+			left: calc(2rem + 1px);
 			overflow-y: auto;
 		}
-		#friendsearch > input{
-				border: 0;
-				background-color: rgba(0,0,0,0);
-				border-bottom: 1px solid white;
+
+		#friendsearch>input {
+			border: 0;
+			background-color: rgba(0, 0, 0, 0);
+			border-bottom: 1px solid white;
 		}
-		td{
+
+		#game td {
 			border: solid 0.125rem rgb(69, 69, 99);
 			height: 3rem;
 			width: 3rem;
 		}
-		#game>div>div{
+
+		#game>div>div {
 			display: inline-block;
 			margin: 0 10rem;
 		}
-		#game>div>div>h1{
-			text-align:center;
+
+		#game>div>div>h1 {
+			text-align: center;
 		}
-		#game>div{
+
+		#game>div {
 			display: grid;
-			grid-template-columns: 44.5rem 44.5rem;
+			grid-template-columns: 43rem 43rem;
 			grid-template-rows: auto;
 		}
-		.deployzone>td{
-			border:0;
+
+		.deploy {
+			background-color: rgb(40, 200, 40)
 		}
-		.deployzone{
-			background-color: rgb(40,200,40)
-		}
-		table{
+
+		table {
 			border-collapse: collapse;
+		}
+
+		#buildmenu {
+			position: absolute;
+			margin: 0;
+			transform: translate(0, -50%);
+		}
+
+		#buildmenu>li {
+			background-color: rgb(87, 87, 125);
+			color: rgb(50, 50, 71);
+			height: 4rem;
+			min-width: 16rem;
+		}
+
+		#buildmenu>li>div.name {
+			height: 4rem;
+			min-width: 4rem;
+			display: inline;
+		}
+
+		#buildmenu>li>table.stats {
+			height: 4rem;
+			min-width: 8rem;
+			display: inline-table;
+		}
+
+		#buildmenu>li>* {
+			margin: 0 1rem
+		}
+
+		#buildmenu>li>table.stats>tbody>tr>td {
+			padding: 0.25rem;
+		}
+
+		ul {
+			list-style-type: none;
 		}
 	</style>
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap" rel="stylesheet">
 </head>
 
-<body>
+<body onclick='document.querySelector("#buildmenu").style.display = "none"'>
 	<main style="display:none">
 		<div id="hry">
 			<div id="friendsearch" class="Box">
@@ -333,9 +374,10 @@
 				</ul>
 			</div>
 			<div id="servers" class="Box">
-				<h2>List of servers or <button onclick="socket.emit('creategame',[true])">Create public server</button></h2>
+				<h2>List of servers or <button onclick="socket.emit('creategame',[true])">Create public server</button>
+				</h2>
 				<ul id="serverlist">
-					
+
 				</ul>
 			</div>
 		</div>
@@ -391,9 +433,10 @@
 		</button>
 	</div>
 	<div>
-	<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-	<script src="/socket.io/socket.io.js"></script>
-	<script src="js.js"></script>
+		<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="js.js"></script>
+		<ul id="buildmenu"></ul>
 </body>
 
 </html>

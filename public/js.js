@@ -1,6 +1,7 @@
 connected = false;
 serverlist = {};
 playerdata = {};
+placebuildings = {};
 Name = false;
 spam = false;
 zpravy = { g: [] };
@@ -31,7 +32,7 @@ function switchchat() {
 		DOMchatl.style.display = "none"
 	}
 }
-socket.on('new message', (data) => {
+socket.on("new message", (data) => {
 	addChatMessage({ username: data.username, message: data.message, skupina: "L" });
 });
 const addChatMessage = (data) => {
@@ -47,7 +48,7 @@ const sendMessage = (mes) => {
 			skupina: actualchat
 		}
 		addChatMessage(temp2);
-		socket.emit('new message', [temp2, temp]);
+		socket.emit("new message", [temp2, temp]);
 	}
 }
 
@@ -101,6 +102,31 @@ const getUsernameColor = (username) => {
 	var index = Math.abs(hash % COLORS.length);
 	return COLORS[index];
 }
+function equalobj(object1, object2) {
+	const keys1 = Object.keys(object1);
+	const keys2 = Object.keys(object2);
+
+	if (keys1.length !== keys2.length) {
+		return false;
+	}
+
+	for (const key of keys1) {
+		const val1 = object1[key];
+		const val2 = object2[key];
+		const areObjects = isobject(val1) && isobject(val2);
+		if (
+			areObjects && !equalobj(val1, val2) ||
+			!areObjects && val1 !== val2
+		) {
+			return false;
+		}
+	}
+
+	return true;
+}
+function isobject(object) {
+	return object != null && typeof object === 'object';
+}
 
 
 
@@ -109,30 +135,74 @@ const getUsernameColor = (username) => {
 
 
 // MARK: game functions
-function creategamefield(us1, us2, size) {
-	el = document.createElement("table")
-	for (i = 0; i < size[1]+1; i++) {
+function creategamefield(us1, us2, grid) {
+	table = document.createElement("table")
+	y = 0
+	for (i of grid) {
+		x = 0
+		tr = document.createElement("tr")
+		for (z of i) {
+			td = document.createElement("td")
+			td.className = z.type
+			td.id = z.type + ";" + x + ";" + y
+			tr.appendChild(td)
+			x++
+		}
+		table.appendChild(tr)
+		y++
+	}
+	/* for (i = 0; i < size[1] + 1; i++) {
 		el.appendChild(document.createElement("tr"))
 		for (y = 0; y < size[0]; y++) {
 			el.lastElementChild.appendChild(document.createElement("td"))
 		}
 	}
-	el.lastElementChild.className = "deployzone"
+	el.lastElementChild.className = "deployzone" */
 	temp = document.querySelectorAll("#game>div>div")
 
 	temp2 = document.createElement("h1")
 	temp2.innerHTML = us1
-	el.className = us1
+	table.className = us1
 	temp[0].appendChild(temp2)
 	temp[0].appendChild(document.createElement("br"))
-	temp[0].appendChild(el.cloneNode(true))
+	temp[0].appendChild(table.cloneNode(true))
 
 	temp2 = document.createElement("h1")
 	temp2.innerHTML = us2
-	el.className = us2
+	table.className = us2
 	temp[1].appendChild(temp2)
 	temp[1].appendChild(document.createElement("br"))
-	temp[1].appendChild(el);
+	temp[1].appendChild(table);
+	document.querySelectorAll("table." + Name + " td").forEach(element => {
+		element.addEventListener("mouseup", function (event) {
+			for (i in placebuildings) {
+				console.log(event.targer)
+				if (i == event.target.className) {
+					buildmenu(event.target.id, event.pageX, event.pageY)
+				}
+			}
+		})
+	})
+}
+function buildmenu(z, x, y) {
+	temp = document.querySelector("#buildmenu")
+	print = ""
+	for (let x of placebuildings[z.split(";")[0]]) {
+		print += "<li onclick='build(\"" + z + "\",\"" + x.name + "\")'><div class=\"name\"><b>" + x.name + "</b></div><table class=\"stats\"><tr>"
+		for (let i in x.buymenu) {
+			print += "<td><b>" + x.buymenu[i].split(";")[1] + ":</b> " + x[x.buymenu[i].split(";")[0]] + "</td>"
+			if (i == Math.ceil((x.buymenu.length) / 2) - 1) print += "</tr><tr>"
+		}
+		print += "</tr></table><img src=\"" + x.icon + "\"></li>"
+	}
+	temp.style.display = "none"
+	temp.innerHTML = print
+	temp.style.top = y + "px"
+	temp.style.left = x + "px"
+	setTimeout(() => {
+		temp.style.display = "block"
+	}, 10);
+
 }
 
 
@@ -160,7 +230,7 @@ async function signup() {
 		}, 200);
 	}
 }
-socket.on('backsignup', data => {
+socket.on("backsignup", data => {
 	console.log("signup: " + data)
 	if (data) {
 		switchtologin()
@@ -181,7 +251,7 @@ async function login() {
 		}, 200);
 	}
 }
-socket.on('backlogin', data => {
+socket.on("backlogin", data => {
 	console.log("login: " + Boolean(data))
 	if (data) {
 		playerdata = data
@@ -222,13 +292,17 @@ document.querySelector("aside input").addEventListener("keyup", function (event)
 
 
 // MARK: Comunication with server
-socket.on('players', data => {
+socket.on("buildings", data => {
+	placebuildings = data[0]
+	samplebuildings = data[1]
+})
+socket.on("players", data => {
 	membersact = data;
 })
-socket.on('updataplayerdata', data => {
+socket.on("updataplayerdata", data => {
 	playerdata = data;
 })
-socket.on('serverlist', data => {
+socket.on("serverlist", data => {
 	serverlist = data;
 	ret = "";
 	for (i in serverlist) {
@@ -236,10 +310,44 @@ socket.on('serverlist', data => {
 	}
 	document.querySelector("#serverlist").innerHTML = ret
 })
-socket.on('placebase', data => {
+socket.on("startgame", data => {
 	ingame = 1
 	document.querySelector("#game").style.display = "block"
 	document.querySelector("#hry").style.display = "none"
 	document.querySelector(".ChatL").innerHTML = ""
-	creategamefield(data[0], data[1], data[2])
+	creategamefield(data.us1, data.us2, data.grid1)
+	game = data
+
+})
+function build(id, building) {
+	let temp = id.split(";")
+	temp[3] = building
+	socket.emit("build", temp)
+}
+socket.on("clock", data => {
+	oldgame = game
+	game = data
+	if (JSON.stringify(game) == JSON.stringify(oldgame)) {
+		console.log("no change")
+	} else {
+		console.error("everything fucking change alert")
+	}
+	for (let i of ["grid1", "grid2"]) {
+		for (let y in game[i]) {
+			for (let x in game[i][y]) {
+				if (JSON.stringify(game[i][y][x])!=JSON.stringify(oldgame[i][y][x])) {
+					let t=document.querySelector("#" + game[i][y][x].type + ";" + x + ";" + y)
+					if (game[i][y][x].type == oldgame[i][y][x].type) {//ToDo: change to read from object file
+						//changed building or destroyd ehm
+						
+					} else {
+						//hp
+						oldgame[i][y][x].object.hp = game[i][y][x].object.hp
+						game[i][y][x].object = oldgame[i][y][x].object
+					}
+				}
+			}
+		}
+	}
+	console.count(data)
 })

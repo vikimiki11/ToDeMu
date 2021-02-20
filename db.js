@@ -1,6 +1,6 @@
 var MongoClient = require('mongodb').MongoClient;
 var DbConnection = function () {
-const url = require('fs').readFileSync('url.txt', 'utf8');
+	const url = require('fs').readFileSync('url.txt', 'utf8');
 	var db = null;
 	var instance = 0;
 

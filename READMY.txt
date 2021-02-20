@@ -1,1 +1,1 @@
-Before start you need creat url.txt with adress to mongodb and download libraries express, socket.io and mongodb
+Before start you need creat url.txt with adress to mongodb and download libraries express, socket.io and mongodb.
